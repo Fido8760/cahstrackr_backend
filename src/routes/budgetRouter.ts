@@ -2,49 +2,63 @@ import { Router } from 'express'
 import { body, param } from 'express-validator'
 import { BudgetController } from '../controllers/BudgetController'
 import { handleInputErrors } from '../middleware/validation'
+import { validateBudgetExists, validateBudgetId, validateBudgetInput } from '../middleware/budget'
+import { ExpensesController } from '../controllers/ExpenseController'
+import { validateExpenseExists, validateExpenseId, validateExpenseInput } from '../middleware/expense'
 
 const router = Router()
+
+router.param('budgetId', validateBudgetId)
+router.param('budgetId', validateBudgetExists)
+
+router.param('expenseId', validateExpenseId)
+router.param('expenseId', validateExpenseExists)
 
 router.get('/', 
     BudgetController.getAll
 )
 
 router.post('/', 
-    body('name')
-        .notEmpty().withMessage('El nombre no puede ir vacio'),
-    body('amount')
-        .notEmpty().withMessage('La cantidad no puede ir vacia')
-        .isNumeric().withMessage('Cantidad no válida')
-        .custom((value) => value > 0).withMessage('Presupuesto debe ser mayor a 0'),
+    validateBudgetInput,
     handleInputErrors,
     BudgetController.create
 )
 
-router.get('/:id',
-    param('id').isInt().withMessage('ID no válido')
-    .custom((value) => value > 0).withMessage('ID no válido'),
-    handleInputErrors,
+router.get('/:budgetId',
     BudgetController.getById
 )
 
-router.put('/:id', 
-    param('id').isInt().withMessage('ID no válido')
-    .custom((value) => value > 0).withMessage('ID no válido'),
-    body('name')
-        .notEmpty().withMessage('El nombre no puede ir vacio'),
-    body('amount')
-        .notEmpty().withMessage('La cantidad no puede ir vacia')
-        .isNumeric().withMessage('Cantidad no válida')
-        .custom((value) => value > 0).withMessage('Presupuesto debe ser mayor a 0'),
-        handleInputErrors,
+router.put('/:budgetId', 
+    validateBudgetInput,
+    handleInputErrors,
     BudgetController.updateById
 )
 
-router.delete('/:id', 
-    param('id').isInt().withMessage('ID no válido')
-    .custom((value) => value > 0).withMessage('ID no válido'),
-    handleInputErrors,
+router.delete('/:budgetId', 
     BudgetController.deleteById
+)
+
+/* Expenses */
+
+
+router.post('/:budgetId/expenses', 
+    validateExpenseInput,
+    handleInputErrors,
+    ExpensesController.create
+)
+
+router.get('/:budgetId/expenses/:expenseId', 
+    ExpensesController.getById
+)
+
+router.put('/:budgetId/expenses/:expenseId',
+    validateExpenseInput,
+    handleInputErrors,
+    ExpensesController.updateById
+)
+
+router.delete('/:budgetId/expenses/:expenseId', 
+    ExpensesController.deleteById
 )
 
 export default router

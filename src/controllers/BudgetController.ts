@@ -1,5 +1,6 @@
-import { response, type Request, type Response } from "express"
+import { type Request, type Response } from "express"
 import Budget from "../models/Budget"
+import Expense from "../models/Expense"
 
 export class BudgetController {
     static getAll = async (req: Request, res: Response) => {
@@ -29,55 +30,20 @@ export class BudgetController {
     }
 
     static getById = async (req: Request, res: Response) => {
-
-        try {
-            const {id} = req.params
-            const budget = await Budget.findByPk(id)
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado')
-                res.status(404).json({error: error.message})
-            }
-            res.json(budget)
-        } catch (error) {
-            //console.log(error)
-            res.status(500).json({error: 'Hubo un error'})    
-        }
-        
+        const budget =  await Budget.findByPk(req.budget.id, {
+            include: [Expense]
+        })
+        res.json(budget)
     }
 
     static updateById = async (req: Request, res: Response) => {
-        try {
-            const {id} = req.params
-            const budget = await Budget.findByPk(id)
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado')
-                res.status(404).json({error: error.message})
-            }
-            //Escribir los cambios del body
-            await budget.update(req.body)
-            res.json('Presupuesto Actualizado correctamente')
-
-        } catch (error) {
-            //console.log(error)
-            res.status(500).json({error: 'Hubo un error'})    
-        }
+        await req.budget.update(req.body)
+        res.json('Presupuesto Actualizado correctamente')
     }
     
     static deleteById = async (req: Request, res: Response) => {
-        try {
-            const {id} = req.params
-            const budget = await Budget.findByPk(id)
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado')
-                res.status(404).json({error: error.message})
-            }
-            //Escribir los cambios del body
-            await budget.destroy()
-            res.json('Presupuesto Eliminado correctamente')
-
-        } catch (error) {
-            //console.log(error)
-            res.status(500).json({error: 'Hubo un error'})    
-        }
+        //Escribir los cambios del body
+        await req.budget.destroy()
+        res.json('Presupuesto Eliminado correctamente')
     }
 }
