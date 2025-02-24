@@ -5,14 +5,14 @@ import { db } from './config/db'
 import budgetRouter from './routes/budgetRouter'
 import authRouter from './routes/authRouter'
 
-async function conncetDB() {
+export async function conncetDB() {
     try {
         await db.authenticate()
         db.sync()
-        console.log( colors.blue.bold('Conexión exitosa a la bd'))
+        //console.log( colors.blue.bold('Conexión exitosa a la bd'))
     } catch (error) {
         //console.log(error)
-        console.log( colors.red.bold('Hubo un error en la BD'))
+        //console.log( colors.red.bold('Hubo un error en la BD'))
     }
 }
 
@@ -26,6 +26,10 @@ app.use(express.json())
 
 app.use('/api/budgets', budgetRouter)
 app.use('/api/auth', authRouter)
+
+app.get('/', (req, res) => {
+    res.send('Todo bien...')
+})
 
 
 export default app
