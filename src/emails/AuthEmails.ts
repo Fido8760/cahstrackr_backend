@@ -15,7 +15,7 @@ export class AuthEmail {
             html: `
                 <p>Hola: ${user.name}, has creado tu cuenta en CashTrackr, ya está casi lista </p>
                 <p>Visita el siguiente enlace:  </p>
-                <a href="#">Confrimar Cuenta </a>
+                <a href="${process.env.FRONT_END}/auth/confirm-account">Confrimar Cuenta </a>
                 <p>e ingresa el código: <b>${user.token}</b></p>
 
             `
@@ -31,7 +31,7 @@ export class AuthEmail {
             html: `
                 <p>Hola: ${user.name}, has solicitado reestablecer tu password</p>
                 <p>Visita el siguiente enlace:  </p>
-                <a href="#">Reestablecer Password</a>
+                <a href="${process.env.FRONT_END}/auth/new-password">Reestablecer Password</a>
                 <p>e ingresa el código: <b>${user.token}</b></p>
 
             `

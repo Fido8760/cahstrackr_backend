@@ -65,6 +65,12 @@ router.get('/user',
     AuthController.user
 )
 
+router.put('/user',
+    authenticate,
+    handleInputErrors,
+    AuthController.updateUser
+)
+
 router.post('/update-password',
     authenticate,
     body('current_password')
